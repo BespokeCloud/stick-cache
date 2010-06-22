@@ -1,71 +1,76 @@
 package com.vercer.cache;
 
 import java.io.Serializable;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class CacheItem<K, T> implements Serializable
 {
-	private static final DateTime NEVER = new DateTime(Long.MAX_VALUE);
 	private static final long serialVersionUID = 1L;
 	private final T item;
-	private final DateTime expirey;
-	private final Duration duration;
-	private final DateTime created;
-	private DateTime accessed;
-	private int accesses;
+	private final Date expirey;
+	private final long duration;
+	private final TimeUnit unit;
+	private final Date created;
+	Date accessed;
+	int accesses;
 	private final K key;
 
 	public CacheItem(K key, T value)
 	{
-		this(key, value, (Duration) null);
+		this(key, value, 0, null);
 	}
 
-	public CacheItem(K key, T item, DateTime expirey)
+	public CacheItem(K key, T item, Date expirey)
 	{
-		this(key, item, expirey, null);
+		this(key, item, expirey, 0, null);
 	}
 
-	public CacheItem(K key, T item, Duration duration)
+	public CacheItem(K key, T item, long duration, TimeUnit unit)
 	{
-		this(key, item, NEVER, duration);
+		this(key, item, null, duration, unit);
 	}
 
-	private CacheItem(K key, T item, DateTime expirey, Duration duration)
+	private CacheItem(K key, T item, Date expirey, long duration, TimeUnit unit)
 	{
 		this.key = key;
 		this.item = item;
 		this.expirey = expirey;
 		this.duration = duration;
+		this.unit = unit;
 
-		created = new DateTime();
+		created = new Date();
 		accessed = created;
 	}
 
 	public T getValue()
 	{
-		this.accessed = new DateTime();
+		this.accessed = new Date();
 		this.accesses++;
 		return this.item;
 	}
 
-	public DateTime getExpirey()
+	public Date getExpirey()
 	{
 		return this.expirey;
 	}
 
-	public Duration getDuration()
+	public long getDuration()
 	{
 		return this.duration;
 	}
+	
+	public TimeUnit getUnit()
+	{
+		return unit;
+	}
 
-	public DateTime getCreated()
+	public Date getCreated()
 	{
 		return this.created;
 	}
 
-	public DateTime getAccessed()
+	public Date getAccessed()
 	{
 		return this.accessed;
 	}
@@ -77,7 +82,8 @@ public class CacheItem<K, T> implements Serializable
 
 	public boolean isValid()
 	{
-		return expirey.isAfterNow() && (duration == null || duration.getMillis() == Long.MAX_VALUE || accessed.plus(duration).isAfterNow());
+		Date now = new Date();
+		return (expirey == null || expirey.after(now)) && (unit == null || duration == Long.MAX_VALUE || new Date(accessed.getTime() + unit.toMillis(duration)).after(now));
 	}
 
 	public K getKey()

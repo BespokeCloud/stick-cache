@@ -1,5 +1,7 @@
 package com.vercer.cache;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class DummyCache<K, V> implements Cache<K, V>
@@ -33,5 +35,17 @@ public class DummyCache<K, V> implements Cache<K, V>
 
 	public void put(CacheItem<K, V> item)
 	{
+	}
+	
+	@Override
+	public Map<K, CacheItem<K, V>> items(Collection<K> keys)
+	{
+		return null;
+	}
+	
+	@Override
+	public Map<K, V> values(Collection<K> keys)
+	{
+		return null;
 	}
 }
