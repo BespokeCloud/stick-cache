@@ -29,7 +29,7 @@ public class DatastoreCache<K, V> extends Cache.Accessor implements Cache<K, V>
 {
 	private final static Logger log = Logger.getLogger(DatastoreCache.class.getName());
 	
-	private final static String PREFIX = "v8_cache_";
+	private final static String PREFIX = "_cache_";
 	private static final String PROPERTY_NAME = "data";
 	private static final int BUFFER_SIZE = 10 * 1024;
 	private static final String LOCK_PROPERTY_NAME = "lock";
