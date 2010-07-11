@@ -1,6 +1,7 @@
 package com.vercer.engine.cache;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -205,7 +206,9 @@ public class MemcacheCache<K, V> extends Cache.Accessor implements Cache<K, V>
 	{
 		Map<Object, Object> all = memcache.getAll(Collections2.transform(keys, keyFunction ));
 		
+		// not all values are cache items - need to filter out LOCKs
 		Map<K, CacheItem<K, V>> converted = new HashMap<K, CacheItem<K,V>>(all.size());
+		
 		for (K key : keys)
 		{
 			Object storeKey = storeKeyValue(key);
@@ -216,7 +219,7 @@ public class MemcacheCache<K, V> extends Cache.Accessor implements Cache<K, V>
 				accessed(item);
 				converted.put(key, item);
 			}
-			// TODO block if find lock?
+			// TODO block if find lock? Probably
 		}
 		
 		return converted;
