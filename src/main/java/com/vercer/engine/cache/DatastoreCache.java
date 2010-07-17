@@ -3,6 +3,8 @@ package com.vercer.engine.cache;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,8 +24,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.vercer.cache.Cache;
 import com.vercer.cache.CacheItem;
-import com.vercer.engine.persist.util.io.NoDescriptorObjectInputStream;
-import com.vercer.engine.persist.util.io.NoDescriptorObjectOutputStream;
 
 public class DatastoreCache<K, V> extends Cache.Accessor implements Cache<K, V>
 {
@@ -138,7 +138,7 @@ public class DatastoreCache<K, V> extends Cache.Accessor implements Cache<K, V>
 		try
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
-			NoDescriptorObjectOutputStream ndos = new NoDescriptorObjectOutputStream(baos);
+			ObjectOutputStream ndos = new ObjectOutputStream(baos);
 			ndos.writeObject(item);
 			return new Blob(baos.toByteArray());
 		}
@@ -151,7 +151,7 @@ public class DatastoreCache<K, V> extends Cache.Accessor implements Cache<K, V>
 	protected CacheItem<K, V> deserialize(Blob blob) throws IOException, ClassNotFoundException
 	{
 		ByteArrayInputStream bais = new ByteArrayInputStream(blob.getBytes());
-		NoDescriptorObjectInputStream ndis = new NoDescriptorObjectInputStream(bais);
+		ObjectInputStream ndis = new ObjectInputStream(bais);
 		@SuppressWarnings("unchecked")
 		CacheItem<K, V> item = (CacheItem<K, V>) ndis.readObject();
 		return item;

@@ -6,17 +6,32 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vercer.cache.CompositeCache;
 import com.vercer.cache.MemoryCache;
 import com.vercer.engine.cache.DatastoreCache;
 import com.vercer.engine.cache.MemcacheCache;
-import com.vercer.engine.persist.LocalDatastoreTestCase;
 
-
-public class TestCompositeCache extends LocalDatastoreTestCase
+public class TestCompositeCache
 {
+    private final LocalServiceTestHelper helper =
+        new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
+    @Before
+    public void setUp() {
+        helper.setUp();
+    }
+
+    @After
+    public void tearDown() {
+        helper.tearDown();
+    }
+    
 	public static class Employee implements Serializable
 	{
 		public Employee(String name, int age, Date joined)
